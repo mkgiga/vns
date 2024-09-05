@@ -1,0 +1,96 @@
+project:
+  name: example
+  version: 1.0.0
+  description: Example project
+  music:
+    cozy: music/bedroom.ogg
+    sunny_day: music/beach.ogg
+
+# this is a comment, it will be ignored by the parser
+
+
+
+place bedroom:
+  name: Bedroom
+  description: This is where I dream about sitting on the floor of my parents' car, which I loved to do as a child, and still do.
+  background: images/bedroom.png
+  theme: music/bedroom.ogg
+
+
+place beach:
+  name: Beach
+  description: The beach is a place where I can relax and enjoy the sun, sand, and water on my skin.
+  background: images/beach.png
+  theme: music/beach.ogg
+
+actor you:
+  player: true
+  name: You
+  description: You are a person who is reading this text right now.
+  color: white
+  aliases:
+    - @
+    - me
+
+actor john:
+  name: John
+  description: John is a boy from elementary school who was really mean to me. I hate him.
+  body:
+    pose:
+      standing: images/john-standing.png
+  default: # all default values for when an actor is spawned
+    body:
+      pose: standing
+  color: red
+
+actor mom:
+  name: Mom
+  description: My mom is the best mom in the world. She always knows how to make me feel better.
+  body:
+    pose:
+      standing: images/mom-standing.png
+  default:
+    pose: standing
+  color: pink
+
+# variable definitions are preceded by a dollar sign
+$score = 0
+
+=> start
+
+  FADE IN
+  PLAY "audio/bedroom.ogg"
+
+  You are in your bedroom. You can see your bed, your desk, and your closet. You can also see a picture of your family on the wall. You can hear the sound of the wind outside.
+
+  you
+    Another day gooning out in my room. I should probably get up and do something.
+
+  mom
+    Hi, honey. How are you feeling today?
+    - 1 Mom!! What are you doing in my room?!
+    - 2 I'm fine, mom. Just tired.
+    - 3 I'm feeling great, mom. Thanks for asking.
+    -> mom_question
+
+=> mom_question
+  => 1 (a = 1, b = 2)
+    you
+      Mom!! What are you doing in my room?!
+
+    mom
+      I just wanted to check on you. You've been in here all day. I'm worried about you.
+
+  => 2
+    you
+      I'm fine, mom. Just tired.
+
+    mom
+      You should get some fresh air. It'll make you feel better.
+
+  => 3
+    you
+      I'm feeling great, mom. Thanks for asking.
+
+    mom
+      That's great to hear. I'm glad you're feeling better.

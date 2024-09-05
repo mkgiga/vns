@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "module": "ESNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "sourceMap": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@classes/*": ["./src/class/*"],
+      "@types": ["./src/types"],
+      "@elements/*": ["./src/class/elements/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@example/*": ["./src/example/*"],
+    },
+  },
+  "exclude": ["node_modules, dist"],
+  "watchOptions": {
+    "excludeDirectories": ["node_modules", "dist"]
+  },
+  
+  "compileOnSave": true 
+}

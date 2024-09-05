@@ -1,0 +1,29 @@
+{
+  "name": "vnscript",
+  "version": "1.0.0",
+  "description": "A visual novel script interpreter that transpiles to JavaScript",
+  "main": "index.js",
+  "scripts": {
+    "compile": "tsc -p tsconfig.json",
+    "rollup": "rollup -c --bundleConfigAsCjs"
+  },
+  "keywords": [
+    "visual novel",
+    "vnscript",
+    "vns",
+    "interpreter",
+    "javascript"
+  ],
+  "author": "mkgiga",
+  "license": "MIT",
+  "dependencies": {
+    "typescript": "^5.5.4",
+    "vnscript": "file:"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "rollup": "^4.21.2",
+    "rollup-plugin-typescript2": "^0.36.0"
+  }
+}

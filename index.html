@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>VNScript Test</title>
+    <script src="dist/vns.bundle.js"></script>
+    <style>
+      
+      html, body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+      }
+
+      #scene {
+        width: 100vw;
+        aspect-ratio: 16 / 9;
+        border: 1px solid #000;
+        background-color: #f0f0f0;
+        overflow: hidden;
+        align-self: center;
+        justify-self: center;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <div id="scene"></div>
+
+    <vn-script in="scene" src="example/example.vns">
+    </vn-script>
+    
+    <script src="example/test.js"></script>
+  </body>
+</html>

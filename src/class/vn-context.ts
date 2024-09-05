@@ -1,0 +1,101 @@
+import { VNValue, VNFunctionArgument, } from "../types"; 
+import { VNInstruction } from "./vn-instruction"; 
+import { VNProject } from "./vn-project";
+
+/**
+ * An object which may have named children or a parent (unless it is the root, in which the parent is null).
+ * @class
+ * @property {VNContext | null} parent The parent context of this context. If null, this is the root context.
+ * @property {VNValue | VNContext} children The children of this context. May be a VNValue or another VNContext.
+ * @property {VNProject | null} project The project that this context belongs to.
+ */
+export class VNContext {
+
+  name: string;
+  parent: VNContext | null;
+  children: { [key: string]: VNValue | VNContext };
+  project: VNProject | null;
+  args: VNValue[];
+
+  // statements that are executed in order
+  instructions: VNInstruction[];
+
+  constructor({
+    name,
+    parent,
+    project,
+    children = undefined,
+    args = [],
+    instructions = [],
+  }: {
+    name: string;
+    parent: VNContext | null;
+    project: VNProject | null;
+    children?: { [key: string]: VNValue | VNContext };
+    args?: VNValue[];
+    instructions?: VNInstruction[];
+  }) {
+    this.name = name;
+    this.parent = parent;
+    this.project = project;
+    this.children = children || {};
+    this.args = args;
+    this.instructions = instructions;
+  }
+
+  /**
+   * Attempt to find an object in the current context or one of its ancestors.
+   * @param {string} identifier The identifier to search for.
+   * @returns {VNValue | null} The value of the identifier if found, or null if not found.
+   */
+  resolve(
+    identifier: string
+  ): { key: string; value: VNValue; owner: VNContext } | undefined {
+    if (this.children[identifier]) {
+      return {
+        key: identifier,
+        value: this.children[identifier],
+        owner: this,
+      };
+    } else if (this.parent) {
+      return this.parent.resolve(identifier);
+    }
+
+    // explicitly return undefined if the identifier is not found in the current context or any of its ancestors
+    // we do this because null is a valid value in vnscript
+    return undefined;
+  }
+
+  /**
+   * Get the value of an identifier in the current context or one of its ancestors (if found).
+   * @param {string} identifier The identifier to get the value of.
+   * @returns {VNValue | null} The value of the identifier if found, or null if not found.
+   */
+  get(identifier: string): VNValue | null {
+    let resolved = this.resolve(identifier);
+    return resolved ? resolved.value : null;
+  }
+
+  /**
+   * Set the value of an identifier in the current context or one of its ancestors (if found).
+   * @param {string} identifier The identifier to set the value of.
+   * @param {VNValue} value The value to set the identifier to
+   * @returns {void}
+   */
+  set(identifier: string, value: VNValue) {
+    let resolved = this.resolve(identifier);
+
+    // if the identifier is not found within any of its ancestors -- set it in the current context
+    if (resolved) {
+      resolved.owner.children[resolved.key] = value;
+    } else {
+      this.children[identifier] = value;
+    }
+  }
+
+  setArgs(args: VNFunctionArgument[]) {
+    this.args = args.map((arg) => arg.value);
+  }
+}
+
+export default { VNContext };
