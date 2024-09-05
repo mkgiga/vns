@@ -10,6 +10,11 @@ export function log(title: string | undefined, ...args: any[]) {
   console.debug(...args);
 }
 
+/**
+ * Create a notification element that is appended to the notifications container.
+ * @param  {{type: 'info' | 'bad' | 'good' | 'warn', message: string}} options The options for the notification.
+ * @todo: Constrict the notification container to be within the visual novel player's bounds and not the entire window.
+ */
 export function notification({
   message,
   type = "info",
@@ -19,16 +24,11 @@ export function notification({
 }) {
   const font = "Nunito, sans-serif";
 
-  const colors = {
-    info: "#3498db",
-    bad: "#e74c3c",
-    good: "#2ecc71",
-    warn: "#f39c12",
-  };
+  
 
   const notif = document.createElement("div");
   notif.style.cssText = `
-      background-color: ${colors[type]};
+      background-color: ${GlobalState.Colors[type]};
       color: white;
       padding: 1rem;
       margin-bottom: 1rem;

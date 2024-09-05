@@ -2,9 +2,21 @@ import { HTMLVNParserDebugConsole } from "@elements/html-vn-parser-debug-console
 
 export class GlobalState {
 
-  /* Optional flags which may or may not be desired in the final build. */  
-  static Flags = {
-    INJECT_CSS: true,
+  /**
+   * Colors for notifications among other things.
+   */
+  static Colors = class {
+    static info = "#3498db"
+    static bad = "#e74c3c"
+    static good = "#2ecc71"
+    static warn = "#f39c12"
+  };
+
+  /**
+   * Optional singleton class for flags which may or may not be desired in the final build. 
+   */  
+  static Flags = class Flags {
+    static INJECT_CSS = true;
   };
   
   static notificationsContainer: HTMLDivElement | null = null;

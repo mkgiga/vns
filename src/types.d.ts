@@ -1,4 +1,10 @@
-
+/**
+ * @file types.d.ts
+ * @fileoverview This file contains vital type declarations for the .vns scripting engine.
+ * @author mkgiga
+ * @module vns
+ * @license MIT
+ */
 
 export abstract class Serializable {
   /** Takes a JSON string and returns a serializable object. */
