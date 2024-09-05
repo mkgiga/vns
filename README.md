@@ -9,10 +9,10 @@ Currently, I'm taking a somewhat rigid, not-so-elegant approach to parsing the c
 out (where every node contains its own callback function) you can send me a message or make a PR.
 
 ## Goals
+### Core goals
 - Create a web component `<visual-novel>` that can be embedded on in any web page which accepts a `src` attribute to a .vns text file.
 - Standardize and implement the .vns language format in a way that streamlines visual novel script writing.
-
-## Stretch goals
+### Stretch goals
 - Implement a lightweight visual novel editor for the web that allows for management of projects and visualization of its flow.
 
 ## Building
