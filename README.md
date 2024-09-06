@@ -5,8 +5,8 @@ Visual Novel Script is an easy-to-read, easy-to-write scripting language for int
 
 ```
 project:
-   name: Untitled Visual Novel
-   description: This is an example visual novel script.
+   name: Bob's Inferno
+   description: A story about a man with untreated mental health issues, who is also a bit of a silly prankster.
    version: 1.0.0
 
 # This is a comment. Comments automatically get removed when your script is fed into the player.
