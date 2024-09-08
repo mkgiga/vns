@@ -22,7 +22,7 @@
       "@example/*": ["./src/example/*"]
     },
   },
-  "exclude": ["node_modules", "dist", "vns-editor"],
+  "exclude": ["node_modules", "dist", "vns-editor", "./tsbuildinfo.json"],
   "watchOptions": {
     "excludeDirectories": ["node_modules", "dist"]
   },

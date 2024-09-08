@@ -8,14 +8,11 @@ project:
 
 # this is a comment, it will be ignored by the parser
 
-
-
 place bedroom:
   name: Bedroom
   description: This is where I dream about sitting on the floor of my parents' car, which I loved to do as a child, and still do.
   background: images/bedroom.png
   theme: music/bedroom.ogg
-
 
 place beach:
   name: Beach
@@ -58,10 +55,16 @@ $score = 0
 
 => start
 
+  => test
+    you
+      This is a test.
+
   FADE IN
   PLAY "audio/bedroom.ogg"
 
-  You are in your bedroom. You can see your bed, your desk, and your closet. You can also see a picture of your family on the wall. You can hear the sound of the wind outside.
+  You are in your bedroom. You can see your bed, your desk, and your closet. 
+  You can also see a picture of your family on the wall. 
+  You can hear the sound of the wind outside.
 
   you
     Another day gooning out in my room. I should probably get up and do something.

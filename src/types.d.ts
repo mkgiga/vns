@@ -101,7 +101,7 @@ export interface VNProject {
 
   /** The main scene to start the visual novel from. */
   mainScene: string = "start";
-  
+
   /** A list of all the scene scripts in the visual novel project. */
   scripts: VNProjectScripts;
 
@@ -114,7 +114,7 @@ export interface VNProject {
   /** A list of all emittable signals (that change the state of something in the scene). */
   signals: VNProjectSignals;
 
-  
+
 };
 
 export type VNValue =
@@ -152,6 +152,34 @@ export type VNFunctionArgument = {
   value: VNValue | undefined;
 }
 
+export type VNContextBuilderArgs = {
+  
+  /** Name of the function's scope. The root scope's name is 'global' and can be referenced by any other scope, no matter how deeply nested. */
+  name: string;
+
+  /** The scope's immediate ancestor */
+  parent: VNContext | null;
+
+  /** The lines that the context will be responsible for parsing. */
+  lines: Array<PreprocessedLine>;
+  
+  /** 
+   * Every context has an absolute base indent level relative to column 0. 
+   * This is used to calculate the relative indent level of the context, 
+   * so that different indentations may have their own semantic meaning. 
+   */
+  baseIndentLevel?: number;
+  
+  /** The line number where the context starts. */
+  y1?: number;
+  
+  /** The line number where the context ends. */
+  y2?: number;
+
+  /** Function arguments with optional default values. */
+  args?: VNFunctionArgument[];
+}
+
 /**
  * Object that keeps track of where all double-quoted strings are stored in the script for later parsing.
  */
@@ -171,11 +199,33 @@ export type ParserStringMap = {
  * arguments passed to the instruction, and a callback function to execute.
  * 
  * The callback function is responsible for resolving any unresolved argument values.
+ * This is an internal type used for defining new behavior in the scripting engine so that we can support new instructions.
  */
-export type VNInstruction = {
-  caller: VNContext;
-  args: { [key: string]: string };
-  callback: (caller: VNContext, args: { [key: string]: string }) => void;
+export abstract class VNInstruction {
+
+  /** The context that called the instruction, akin to 'this' in JavaScript. */
+  private caller: VNContext;
+
+  /** Arguments passed to the instruction. */
+  private args: { [key: string]: string } = {};
+
+  public constructor(caller: VNContext, args: { [key: string]: string }) {
+    this.caller = caller;
+    this.args = args;
+  }
+
+  public getArgs(): { [key: string]: string } { 
+    return this.args;
+  }
+
+  public getCaller(): VNContext {
+    return this.caller;
+  }
+
+  /**
+   * If this returns a value, it may be used as an expression in the script.
+   */
+  public abstract execute(caller: VNContext, args: { [key: string]: string }): any | void;
 }
 
 export default {

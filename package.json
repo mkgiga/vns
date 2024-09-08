@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "compile": "tsc -p tsconfig.json",
-    "rollup": "rollup -c --bundleConfigAsCjs"
+    "rollup": "rollup -c --bundleConfigAsCjs",
+    "build": "run compile && npm run rollup",
+    "dev": "rollup -c -w --bundleConfigAsCjs"
   },
   "keywords": [
     "visual novel",

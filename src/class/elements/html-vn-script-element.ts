@@ -9,7 +9,7 @@ import {
   VNFunctionArgument,
   ParserStringMap,
 } from "@types";
-  
+
 export class HTMLVNScriptElement extends HTMLElement {
 
   targetSceneContainerDiv: HTMLElement | null = null;
@@ -96,7 +96,8 @@ export class HTMLVNScriptElement extends HTMLElement {
       parent: null,
       lines,
       baseIndentLevel: 0,
-      y: 0,
+      y1: 0,
+      args: [], // maybe we'll add arguments to the root context later when run in a terminal or something
     });
 
     log("RESULT:", root);
@@ -163,6 +164,8 @@ export class HTMLVNScriptElement extends HTMLElement {
     ctx.set(key, value);
   }
 
+  
+
   /**
    * Recursively build the context tree from the preprocessed lines.
    * @param {VNContext} parent Owner of the context. If null, the context is the root.
@@ -176,25 +179,61 @@ export class HTMLVNScriptElement extends HTMLElement {
     parent,
     lines,
     baseIndentLevel = 0,
-    y = 0,
+    y1 = 0,
+    y2 = 0,
     args = [],
   }: {
     name: string;
     parent: VNContext | null;
     lines: Array<PreprocessedLine>;
     baseIndentLevel?: number;
-    y?: number;
+    y1?: number;
+    y2?: number;
     args?: VNFunctionArgument[];
   }): VNContext {
     // due to the parent-child structure of a context node, we don't need a stack array to keep track of nesting
-    let ctx = new VNContext({ parent, project: this.currentProject, name: name });
+    let ctx = new VNContext({ parent, project: this.currentProject, name: name, args });
 
-    for (let line of lines) {
+    const parseContextLines = ({ y1, preprocessedLines }: { y1: number, preprocessedLines: PreprocessedLine[] }): { scopedLines: PreprocessedLine[], returnStatement: string, y1: number, y2: number } => {
+
+      let y2 = y1; // automatically set to y0 in case there are no lines in the context
+
+      let result = false;
+      let returnStatement: string = "";
+
+      const scopedLines: PreprocessedLine[] = [];
+      const allPreprocessedLines = preprocessedLines;
+
+      for (let i = y1; i < lines.length; i++) {
+        const line = allPreprocessedLines[i];
+
+        scopedLines.push(line);
+
+        const { t, y, line: text } = line;
+        const { result: res, returnStatement: ret } = this.isEndOfContext(line, baseIndentLevel);
+
+        result = res;
+        returnStatement = ret;
+
+        if (result) {
+          // no need to parse any more lines.
+          y2 = y;
+          break;
+        }
+      }
+
+      return { scopedLines, returnStatement: returnStatement, y1, y2 };
+    }
+
+    // we need to know exactly where the context begins and ends.
+    const { scopedLines, returnStatement, y1: newY1, y2: newY2 } = parseContextLines({ y1, preprocessedLines: lines });
+
+    for (let line of scopedLines) {
       const y = line.y;
       const t = line.t;
       const text = line.line;
 
-      const relativeIndent = t - baseIndentLevel;
+      let relativeIndent = t - baseIndentLevel;
 
       // first, let's find all local identifiers so we can declare them ahead of time
       // variables cannot be declared without an assignment in the same statement
@@ -208,6 +247,127 @@ export class HTMLVNScriptElement extends HTMLElement {
         }
       }
 
+      const tLessThanZero = () => {
+        // less than zero relative indentation means that the current line belongs to the parent context
+        // but only if the line is not empty
+
+        if (text.trim() !== "") {
+          y2 = y;
+        }
+
+        return;
+      }
+
+      const t0 = ({ isRoot = false }) => {
+
+        // do the same thing as idt 1, but for the root context
+        if (parent === null) {
+          baseIndentLevel = 0;
+          relativeIndent = 0;
+          t1({ isRoot: true });
+        }
+
+        // if we got here, it means that the current context has a parent.
+        // let's return to the parent context.
+        if (isRoot) {
+          return;
+        }
+      }
+
+      const t1 = ({ isRoot = false }) => {
+        // '=> name': function declaration
+        // '=> name(arg1=val1, arg2=val2)': function declaration with arguments and default values. may have a space between the '=>' and the function name.
+        if (text.startsWith("=>")) {
+          const re = /=>\s*(\w+)\s*(?:\(([^)]+)\))?/;
+          const match = text.match(re);
+          const functionName = String(match ? match[1] : "").trim();
+
+          log('Function name', functionName);
+
+          // anonymous functions are not allowed
+          if (!match || !functionName) {
+            error({
+              friendly: `Error: Functions (=>) must be followed by a name.`,
+              detailed: `Syntax error: Invalid function declaration.`,
+              lineNumber: y + 1,
+            });
+          }
+
+          let args: VNFunctionArgument[] = [];
+
+          if (match && match[2]) {
+            args = match[2]
+              ? match[2].split(",").map((arg) => {
+                if (arg.includes("=")) {
+                  const [key, value] = arg.split("=");
+                  return { key: key.trim(), value: value.trim() };
+                } else {
+                  return { key: arg.trim(), value: undefined };
+                }
+              })
+              : [];
+
+            log("Arguments", args);
+          }
+
+          const startLine = y;
+
+          // enter the function's context
+          // we need to modify the lines array so that the function's context only has access to the lines that belong to it
+          const functionContext = this.buildContext({
+            name: functionName,
+            parent: ctx,
+            lines,
+            baseIndentLevel: baseIndentLevel + 1,
+            y1: y,
+            args: args,
+          });
+
+          // store a reference to this local function in the parent (this) context
+          ctx.set(functionName, functionContext);
+
+          return;
+        }
+
+        // '<=': return statement
+        if (text.startsWith("<-")) {
+          const re = /<-\s*(.+)/;
+          const match = text.match(re);
+          let returnValue = match ? match[1] : null;
+
+          if (!returnValue) {
+            returnValue = null;
+          }
+
+
+        }
+      }
+
+      const t2 = () => {
+
+      }
+
+
+      const t3 = () => {
+
+      }
+
+      const tDefault = () => {
+        if (relativeIndent > 3) {
+          // at no point should the relative indentation level be greater than 3 in any context
+          error({
+            friendly: `Error: Invalid indentation level.`,
+            lineNumber: y,
+            detailed: `Syntax error: Invalid indentation level at line ${y + 1}.`,
+          });
+        } else if (relativeIndent < 0) {
+          if (text.trim() !== "") {
+            tLessThanZero();
+          }
+
+        }
+      }
+
       // though variable assignments and other statements can be at any indentation level within a function,
       // certain indentation levels have special semantic meaning in vnscript
       // 0: parent context. if the parent is null, this is the root context. if not, we should return to the parent context.
@@ -216,88 +376,22 @@ export class HTMLVNScriptElement extends HTMLElement {
       // 3: actor dialogue
       switch (relativeIndent) {
         case 0:
+          t0({ isRoot: parent === null });
           break;
 
         case 1:
-          // '=> name': function declaration
-          // '=> name(arg1=val1, arg2=val2)': function declaration with arguments and default values. may have a space between the '=>' and the function name.
-          if (text.startsWith("=>")) {
-            const re = /=>\s*(\w+)\s*(?:\(([^)]+)\))?/;
-            const match = text.match(re);
-
-
-            const functionName = String(match ? match[1] : "").trim();
-
-            log('Function name', functionName);
-
-            // anonymous functions are not allowed
-            if (!match || !functionName) {
-              error({
-                friendly: `Error: Functions (=>) must be followed by a name.`,
-                detailed: `Syntax error: Invalid function declaration.`,
-                lineNumber: y + 1,
-              });
-            }
-
-            let args: VNFunctionArgument[] = [];
-
-            if (match && match[2]) {
-              args = match[2]
-                ? match[2].split(",").map((arg) => {
-                  if (arg.includes("=")) {
-                    const [key, value] = arg.split("=");
-                    return { key: key.trim(), value: value.trim() };
-                  } else {
-                    return { key: arg.trim(), value: undefined };
-                  }
-                })
-                : [];
-
-              log("Arguments", args);
-            }
-
-            // enter the function's context
-            const functionContext = this.buildContext({
-              name: functionName,
-              parent: ctx,
-              lines,
-              baseIndentLevel: baseIndentLevel + 1,
-              y,
-              args: args,
-            });
-
-            // store a reference to this local function in the parent (this) context
-            ctx.set(functionName, functionContext);
-          }
-
-          // '<=': return statement
-          if (text.startsWith("<-")) {
-            const re = /<-\s*(.+)/;
-            const match = text.match(re);
-            let returnValue = match ? match[1] : null;
-
-            if (!returnValue) {
-              returnValue = null;
-            }
-
-
-          }
-
+          t1({ isRoot: parent === null });
           break;
         case 2:
+          t2();
           break;
+
         case 3:
+          t3();
           break;
 
         default:
-          if (relativeIndent > 3) {
-            // at no point should the relative indentation level be greater than 3 in any context
-            error({
-              friendly: `Error: Invalid indentation level.`,
-              lineNumber: y,
-              detailed: `Syntax error: Invalid indentation level at line ${y + 1}.`,
-            });
-          }
+          tDefault();
           break;
       }
 
@@ -320,8 +414,8 @@ export class HTMLVNScriptElement extends HTMLElement {
 
         // valid variable assignment
         const parsedValueText = this.parseValueFollowingEqualsSign({ valueStart: value, line });
-
       }
+      // function call
     }
 
     return ctx;
@@ -331,13 +425,37 @@ export class HTMLVNScriptElement extends HTMLElement {
    * Patterns for deciding when an expression ends.
    */
   private endOfExpressionDelims = [
-    /\n\s*\n\s*\n/g, // Double empty lines
-    /(?<!"[^"]*)#.*\n/g, // Comments
-
+    // Double empty lines
+    /\n\s*\n\s*\n/g,
     // commas appearing outside of a string
     /(?<!"[^"]*),/g,
-
   ]
+
+  private endOfContextDelims = [
+    // return statement with a value (optional)
+    /^\s*<=\s*(.+)*$/g,
+  ]
+
+  private isEndOfContext(line: PreprocessedLine, baseIndentLevel: number): { result: boolean, returnStatement: string } {
+    const { line: text, t, y } = line;
+    const relativeIndent = t - baseIndentLevel;
+
+    if (y >= line.allLines.length) {
+      return { result: true, returnStatement: "" };
+    }
+
+    if (relativeIndent < 0 && text.trim() !== "") {
+      return { result: true, returnStatement: "" };
+    }
+
+    // check return statement
+    const returnStatement = text.match(this.endOfContextDelims[0]);
+    if (returnStatement != null) {
+      return { result: true, returnStatement: returnStatement[1] };
+    }
+
+    return { result: false, returnStatement: "" };
+  }
 
   private parseValueFollowingEqualsSign({
     valueStart,
@@ -351,9 +469,8 @@ export class HTMLVNScriptElement extends HTMLElement {
 
     // we're going to parse until a statement is found, the expression ends
 
-
-
   }
+
   private preprocess(text: string): PreprocessedLine[] {
     let processed = text;
 
@@ -371,28 +488,25 @@ export class HTMLVNScriptElement extends HTMLElement {
     const matchWhitespace = /^\s+|\s+$/g;
 
     processed = processed.replace(matchWhitespace, "");
+    console.log(processed);
 
     const preprocessedInfo = {
-      lines: [],
+      lines: [] as PreprocessedLine[],
       lineCount: processed.split("\n").length,
     };
 
     // attach relevant information to each line to help the parser
     const lines = processed.split("\n").map((line, y) => {
       const t = this.getIndentLevel({ line, y });
+      const preprocessedLine = { line: line.trim(), y, t, allLines: preprocessedInfo.lines };
+      preprocessedInfo.lines.push(preprocessedLine);
       return { line: line.trim(), y, t, allLines: preprocessedInfo.lines };
     });
 
-    /**
-     *
-     *    ------------------------------------------------------------------------------------------------------------
-     *  /    WARNING: PAST THIS POINT, NO MODIFICATION OF THE CONTENTS OF THE TEXT INSIDE EACH LINE SHOULD OCCUR.      \
-     *  \           THIS IS BECAUSE WE HAVE ASSIGNED START AND END INDICES TO EACH STRING IN THE TEXT.                 /
-     *    ------------------------------------------------------------------------------------------------------------
-     * 
-     */
-
-    const stringMap: ParserStringMap = { count: 0 };
+    // find all explicit string literals and store them in a map
+    const explicitStringMap: ParserStringMap = {
+      count: 0
+    };
 
     let startQuoteX = -1;
     let endQuoteX = -1;
@@ -417,8 +531,8 @@ export class HTMLVNScriptElement extends HTMLElement {
           } else {
             endQuoteX = x;
             value = line.slice(startQuoteX + 1, endQuoteX);
-            stringMap[y] = { start: startQuoteX, end: endQuoteX, value };
-            stringMap.count++;
+            explicitStringMap[y] = { start: startQuoteX, end: endQuoteX, value };
+            explicitStringMap.count++;
             resetValues();
           }
         }
@@ -427,9 +541,19 @@ export class HTMLVNScriptElement extends HTMLElement {
       // resetValues(); // let's allow explicit strings to span multiple lines
     }
 
+    /**
+     *
+     *    ------------------------------------------------------------------------------------------------------------
+     *  /    WARNING: PAST THIS POINT, NO MODIFICATION OF THE CONTENTS OF THE TEXT INSIDE EACH LINE SHOULD OCCUR.      \
+     *  \           THIS IS BECAUSE WE HAVE ASSIGNED START AND END INDICES TO EACH STRING IN THE TEXT.                 /
+     *    ------------------------------------------------------------------------------------------------------------
+     * 
+     */
+
     // assign the string map to this instance for later use
-    this.stringMap = stringMap;
-    console.log(stringMap);
+    this.stringMap = explicitStringMap;
+    console.log(explicitStringMap);
+    console.log(lines);
     return lines;
   }
 
