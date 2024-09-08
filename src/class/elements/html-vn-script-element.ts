@@ -19,6 +19,11 @@ export class HTMLVNScriptElement extends HTMLElement {
     debugLevel: 0,
   };
 
+  /**
+   * At runtime, this is set to be a reference to all the lines that are being parsed relative to the root context.
+   */
+  lines: PreprocessedLine[] = [];
+
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
@@ -91,6 +96,9 @@ export class HTMLVNScriptElement extends HTMLElement {
    */
   private parse({ text }: { text: string }) {
     const lines = this.preprocess(text);
+    
+    this.lines = lines;
+
     const root = this.buildContext({
       name: "global",
       parent: null,
@@ -164,7 +172,14 @@ export class HTMLVNScriptElement extends HTMLElement {
     ctx.set(key, value);
   }
 
-  
+  public evaluate(expression: string, scopedLines: Array<PreprocessedLine>): VNValue | VNContext | undefined {
+    let result: VNValue | VNContext | undefined = undefined;
+    
+    result = this.evaluateValue({ value: expression, line: { line: expression, y: 0, t: 0, allLines: [] } });
+
+    // TODO: Implement the logic for evaluating an expression
+    return result;
+  }
 
   /**
    * Recursively build the context tree from the preprocessed lines.
@@ -191,8 +206,9 @@ export class HTMLVNScriptElement extends HTMLElement {
     y2?: number;
     args?: VNFunctionArgument[];
   }): VNContext {
+
     // due to the parent-child structure of a context node, we don't need a stack array to keep track of nesting
-    let ctx = new VNContext({ parent, project: this.currentProject, name: name, args });
+    let ctx = new VNContext({ parent, project: this.currentProject, name: name, args, parser: this, scopedLines: lines });
 
     const parseContextLines = ({ y1, preprocessedLines }: { y1: number, preprocessedLines: PreprocessedLine[] }): { scopedLines: PreprocessedLine[], returnStatement: string, y1: number, y2: number } => {
 
@@ -317,7 +333,7 @@ export class HTMLVNScriptElement extends HTMLElement {
           const functionContext = this.buildContext({
             name: functionName,
             parent: ctx,
-            lines,
+            lines: scopedLines,
             baseIndentLevel: baseIndentLevel + 1,
             y1: y,
             args: args,
@@ -330,7 +346,7 @@ export class HTMLVNScriptElement extends HTMLElement {
         }
 
         // '<=': return statement
-        if (text.startsWith("<-")) {
+        if (text.startsWith("<-") || text.startsWith("<=")) {
           const re = /<-\s*(.+)/;
           const match = text.match(re);
           let returnValue = match ? match[1] : null;
@@ -495,11 +511,19 @@ export class HTMLVNScriptElement extends HTMLElement {
       lineCount: processed.split("\n").length,
     };
 
-    // attach relevant information to each line to help the parser
-    const lines = processed.split("\n").map((line, y) => {
-      const t = this.getIndentLevel({ line, y });
+    let previousIndentLevel = 0;
+
+    /**
+     * A special array where each line is attributed properties relevant to the parser. 
+     * @type {Array<PreprocessedLine>} 
+     */
+    const lines: Array<PreprocessedLine> = processed.split("\n").map((line, y) => {
+      const t = this.getIndentLevel({ line, y, previousIndentLevel });
+      previousIndentLevel = t;
+
       const preprocessedLine = { line: line.trim(), y, t, allLines: preprocessedInfo.lines };
       preprocessedInfo.lines.push(preprocessedLine);
+      
       return { line: line.trim(), y, t, allLines: preprocessedInfo.lines };
     });
 
@@ -542,7 +566,7 @@ export class HTMLVNScriptElement extends HTMLElement {
     }
 
     /**
-     *
+     * @important
      *    ------------------------------------------------------------------------------------------------------------
      *  /    WARNING: PAST THIS POINT, NO MODIFICATION OF THE CONTENTS OF THE TEXT INSIDE EACH LINE SHOULD OCCUR.      \
      *  \           THIS IS BECAUSE WE HAVE ASSIGNED START AND END INDICES TO EACH STRING IN THE TEXT.                 /
@@ -550,18 +574,32 @@ export class HTMLVNScriptElement extends HTMLElement {
      * 
      */
 
-    // assign the string map to this instance for later use
+    // for keeping track of string literal indices
     this.stringMap = explicitStringMap;
+    
     console.log(explicitStringMap);
     console.log(lines);
+    
     return lines;
   }
 
-  private getIndentLevel({ line, y }: { line: string; y: number }) {
+  private getIndentLevel({ line, y, previousIndentLevel }: { line: string; y: number, previousIndentLevel: number }) {
     const indentSize = this.options.indentSize;
     let indentLevel = 0;
 
     for (let i = 0; i < line.length; i++) {
+      let emptyLineRegex = /^\s*$/g;
+      
+      /* 
+       * in order to avoid having to check for empty lines when
+       * checking for end of context, we'll just ensure that empty lines
+       * inherit the previous line's indentation level.
+       * this should keep things simple and consistent later on.
+       */
+      if (emptyLineRegex.test(line)) {
+        return previousIndentLevel;
+      }
+
       if (line[i] === " ") {
         indentLevel++;
       } else {

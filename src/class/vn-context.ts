@@ -1,4 +1,5 @@
-import { VNValue, VNFunctionArgument, } from "../types"; 
+import { VNValue, VNFunctionArgument, PreprocessedLine, } from "../types"; 
+import { HTMLVNScriptElement } from "./elements/html-vn-script-element";
 import { VNInstruction } from "./vn-instruction"; 
 import { VNProject } from "./vn-project";
 
@@ -14,8 +15,15 @@ export class VNContext {
   name: string;
   parent: VNContext | null;
   children: { [key: string]: VNValue | VNContext };
+  parser: HTMLVNScriptElement;
   project: VNProject | null;
   args: VNValue[];
+  scopedLines: PreprocessedLine[];
+
+  /**
+   * An unevaluated return statement string which gets evaluated when the context is exited.
+   */
+  returnStatement: string;
 
   // statements that are executed in order
   instructions: VNInstruction[];
@@ -27,6 +35,9 @@ export class VNContext {
     children = undefined,
     args = [],
     instructions = [],
+    returnStatement = "",
+    parser,
+    scopedLines,
   }: {
     name: string;
     parent: VNContext | null;
@@ -34,6 +45,9 @@ export class VNContext {
     children?: { [key: string]: VNValue | VNContext };
     args?: VNValue[];
     instructions?: VNInstruction[];
+    returnStatement?: string;
+    parser: HTMLVNScriptElement;
+    scopedLines: PreprocessedLine[];
   }) {
     this.name = name;
     this.parent = parent;
@@ -41,6 +55,9 @@ export class VNContext {
     this.children = children || {};
     this.args = args;
     this.instructions = instructions;
+    this.returnStatement = returnStatement;
+    this.parser = parser;
+    this.scopedLines = scopedLines;
   }
 
   /**
@@ -64,6 +81,11 @@ export class VNContext {
     // explicitly return undefined if the identifier is not found in the current context or any of its ancestors
     // we do this because null is a valid value in vnscript
     return undefined;
+  }
+
+  onReturn() {
+    const statement = this.returnStatement;
+    return this.parser.evaluate(statement, this.scopedLines);
   }
 
   /**

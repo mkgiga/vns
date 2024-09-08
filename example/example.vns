@@ -58,6 +58,7 @@ $score = 0
   => test
     you
       This is a test.
+  <= return statement here
 
   FADE IN
   PLAY "audio/bedroom.ogg"
@@ -75,6 +76,7 @@ $score = 0
     - 2 I'm fine, mom. Just tired.
     - 3 I'm feeling great, mom. Thanks for asking.
     -> mom_question
+
 
 => mom_question
   => 1 (a = 1, b = 2)
