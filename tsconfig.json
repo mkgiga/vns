@@ -10,16 +10,19 @@
     "rootDir": "./src",
     "sourceMap": true,
     "baseUrl": "./",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
     "paths": {
       "@/*": ["./src/*"],
       "@classes/*": ["./src/class/*"],
       "@types": ["./src/types"],
       "@elements/*": ["./src/class/elements/*"],
       "@utils/*": ["./src/utils/*"],
-      "@example/*": ["./src/example/*"],
+      "@example/*": ["./src/example/*"]
     },
   },
-  "exclude": ["node_modules, dist"],
+  "exclude": ["node_modules", "dist", "vns-editor"],
   "watchOptions": {
     "excludeDirectories": ["node_modules", "dist"]
   },

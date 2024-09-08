@@ -5,7 +5,7 @@ export class GlobalState {
   /**
    * Colors for notifications among other things.
    */
-  static Colors = class {
+  static Colors = class Colors {
     static info = "#3498db"
     static bad = "#e74c3c"
     static good = "#2ecc71"
