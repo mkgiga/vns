@@ -6,8 +6,9 @@ import {
   VNProjectSignals,
   VNProjectSounds,
   VNProjectPlaces,
-  Serializable,
-} from '../types';
+} from '@types';
+
+import { Serializable } from './vn-serializable';
 
 export class VNProject extends Serializable {
   name: string;
@@ -78,3 +79,5 @@ export class VNProject extends Serializable {
     return JSON.stringify(this);
   }
 }
+
+export default { VNProject };

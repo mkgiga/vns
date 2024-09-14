@@ -6,13 +6,7 @@
  * @license MIT
  */
 
-export abstract class Serializable {
-  /** Takes a JSON string and returns a serializable object. */
-  static fromJSON(json: string): Serializable;
-
-  /** Serializes the instance to a JSON string, which may be used to save and load the project. */
-  toJSON(): string;
-}
+import { VNContext } from "./class/vn-context";
 
 export type VNProjectActorBodyPart = {
   [variant: string]: string;
@@ -113,8 +107,6 @@ export interface VNProject {
 
   /** A list of all emittable signals (that change the state of something in the scene). */
   signals: VNProjectSignals;
-
-
 };
 
 export type VNValue =
@@ -145,6 +137,29 @@ export type PreprocessedLine = {
   line: string;
   /** Reference to all of the lines that are being parsed. */
   allLines: PreprocessedLine[];
+}
+
+/**
+ * Type that defines a set of rules for what lines it can parse and how to parse them.
+ */
+export type ContextPreprocessingRules = {
+  /** The context's first line number. (inclusive) Its first line should always be 1 indent level lower than the next line. */
+  y1: number;
+  /** The context's last line number. (inclusive) */
+  y2: number;
+  /** The context's name. */
+  name: string;
+  /** The context's arguments. */
+  args: Object<string, string>;
+  /** The context's parent. */
+  absoluteIndentLevel: number;
+}
+
+/**
+ * A dictionary of line numbers and their corresponding context.
+ */
+export type VNProcessedLabelMap = {
+  [lineNumber: number]: VNContext;
 }
 
 export type VNFunctionArgument = {
@@ -230,6 +245,7 @@ export abstract class VNInstruction {
 
 export default {
   Serializable,
+  VNInstruction,
   VNProject,
   VNProjectActorBodyPart,
   VNProjectActorBody,
@@ -246,5 +262,5 @@ export default {
   PreprocessedLine,
   VNFunctionArgument,
   ParserStringMap,
-  VNInstruction,
+  VNContextBuilderArgs
 }

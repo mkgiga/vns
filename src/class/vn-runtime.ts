@@ -1,3 +1,11 @@
+/**
+ * @file vn-runtime.ts
+ * @fileoverview This file contains the runtime environment for executing visual novel scripts.
+ * @module vns
+ * @license MIT
+ * @author mkgiga
+ */
+
 import { VNContext } from './vn-context';
 import { VNInstruction } from './vn-instruction';
 

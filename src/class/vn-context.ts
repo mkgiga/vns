@@ -16,7 +16,7 @@ export class VNContext {
   parent: VNContext | null;
   children: { [key: string]: VNValue | VNContext };
   parser: HTMLVNScriptElement;
-  project: VNProject | null;
+  project: VNProject;
   args: VNValue[];
   scopedLines: PreprocessedLine[];
 
@@ -41,7 +41,7 @@ export class VNContext {
   }: {
     name: string;
     parent: VNContext | null;
-    project: VNProject | null;
+    project: VNProject;
     children?: { [key: string]: VNValue | VNContext };
     args?: VNValue[];
     instructions?: VNInstruction[];
@@ -81,6 +81,30 @@ export class VNContext {
     // explicitly return undefined if the identifier is not found in the current context or any of its ancestors
     // we do this because null is a valid value in vnscript
     return undefined;
+  }
+
+  /**
+   * A pretty-printed version of the context object without needless clutter.
+   * @returns {object} A pretty-printed version of the context object used for printing to the console.
+   */
+  public prettyPrintedObject(): { [key: string]: VNValue | VNContext } {
+    const pretty = {
+      ...(() => {
+        let children: { [key: string]: VNValue | VNContext } = {};
+
+        for (let key in this.children) {
+          const value = this.children[key];
+          if (value instanceof VNContext) {
+            children[key] = value.prettyPrintedObject();
+          } else {
+            children[key] = value;
+          }
+        }
+        return children;
+      })(),
+    };
+
+    return pretty;
   }
 
   onReturn() {

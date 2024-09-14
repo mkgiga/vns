@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "A visual novel script interpreter that transpiles to JavaScript",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "compile": "tsc -p tsconfig.json",
-    "rollup": "rollup -c --bundleConfigAsCjs",
     "build": "run compile && npm run rollup",
-    "dev": "rollup -c -w --bundleConfigAsCjs"
+    "dev": "npx rollup -c -w --bundleConfigAsCjs"
   },
   "keywords": [
     "visual novel",
@@ -16,6 +16,7 @@
     "interpreter",
     "javascript"
   ],
+  
   "author": "mkgiga",
   "license": "MIT",
   "dependencies": {

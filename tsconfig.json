@@ -9,20 +9,18 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "sourceMap": true,
-    "baseUrl": "./",
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@classes/*": ["./src/class/*"],
-      "@types": ["./src/types"],
-      "@elements/*": ["./src/class/elements/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@example/*": ["./src/example/*"]
+      "@/classes/*": ["./src/class/*"],
+      "@/types": ["./src/types"],
+      "@/elements/*": ["./src/class/elements/*"],
+      "@/util/*": ["./src/util/*"],
+      "@/example/*": ["./src/example/*"],
+      "@/elements": ["./src/class/elements"],
     },
   },
-  "exclude": ["node_modules", "dist", "vns-editor", "./tsbuildinfo.json"],
+  "exclude": ["node_modules", "dist", "./tsbuildinfo.json"],
   "watchOptions": {
     "excludeDirectories": ["node_modules", "dist"]
   },

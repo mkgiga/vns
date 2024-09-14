@@ -8,10 +8,9 @@
  * @author mkgiga
  * @module vns
  */
-
-import { HTMLVNScriptElement } from "@elements/html-vn-script-element";
 import { HTMLVNParserDebugConsole } from "./class/elements/html-vn-parser-debug-console";
-import { GlobalState } from "@classes/vn-global-state";
+import { HTMLVNScriptElement } from "@/elements/html-vn-script-element";
+import { GlobalState } from "@/classes/vn-global-state";
 
 function init() {
   // Initializes a global state object accessible through `document.window`

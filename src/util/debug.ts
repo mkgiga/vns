@@ -6,7 +6,6 @@ import { GlobalState } from "@classes/vn-global-state";
  */
 export function log(title: string | undefined, ...args: any[]) {
   // colored, outlined log message
-  console.log(`[ --- ${new Date().toLocaleTimeString()} ${title ? `| ${title}` : ""} --- ]`);
   console.debug(...args);
 }
 

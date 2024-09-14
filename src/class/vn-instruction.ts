@@ -1,7 +1,6 @@
 import { VNValue } from "../types";
 import { VNContext } from "./vn-context";
 
-
 export abstract class VNInstruction {
 
   /**
