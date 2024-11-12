@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+
+<!--
+  ## .vns Editor
+  ## 
+  ## A visual editor for my VN engine.
+  ##
+  ## date:    2024-11-10
+  ## license: MIT
+  ## author:  @mkgiga
+  ## version: 0.1.0
+  ##
+-->
+
+<html lang="en">
+  <head>
+    <title>VN Editor</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="./styles/animations.css" />
+    <link rel="stylesheet" type="text/css" href="./styles/splash.css" />
+    <link rel="stylesheet" type="text/css" href="./styles/generic.css" />
+    <link rel="stylesheet" type="text/css" href="./styles/editor.css" />
+  </head>
+
+  <body>
+    <div id="app" class="window">
+      <div id="top-bar" class="window-menu text-shadow">
+        <button id="btn-file" class="window-menu-item">File</button>
+        <button id="btn-edit" class="window-menu-item">Edit</button>
+        <button id="btn-project" class="window-menu-item">Project</button>
+        <button id="btn-tools" class="window-menu-item">Tools</button>
+        <button id="btn-view" class="window-menu-item">View</button>
+        <button id="btn-help" class="window-menu-item">Help</button>
+      </div>
+
+      <div id="splash" disabled>
+        <h1>.vns Editor</h1>
+        <p>A visual editor for my VN engine.</p>
+        <div id="splash-menu">
+          <div class="splash-menu-items text-shadow">
+            <button class="menu-item splash-new">
+              <span class="material-icons">add</span><span>New</span>
+            </button>
+            <button class="menu-item splash-open">
+              <span class="material-icons">folder_open</span><span>Open</span>
+            </button>
+            <button class="menu-item splash-recent">
+              <span class="material-icons">history</span
+              ><span>Open Recent</span>
+            </button>
+            <button class="menu-item splash-save">
+              <span class="material-icons">exit_to_app</span><span>Exit</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="editor" hidden>
+        <div class="editor-inner">
+
+          <div class="window" id="editor-left">
+            <div class="window-menu text-shadow">
+              
+            </div>
+
+            <div id="editor-scene">
+
+            </div>
+          </div>
+
+          <div class="window" id="editor-right">
+            <div class="window" id="vn-preview">
+              <div id="vn-preview-top-bar" class="window-menu">
+                <h4>Preview</h4>
+                <button id="vn-preview-play" class="window-menu-item material-icons">
+                  play_arrow
+                </button>
+                <button id="vn-preview-pause" class="window-menu-item material-icons">
+                  pause
+                </button>
+                <button id="vn-preview-stop" class="window-menu-item material-icons">
+                  stop
+                </button>
+              </div>
+
+              <div id="vn-preview-player-container">
+                
+              </div>
+            </div>
+
+            <div class="window inner-shadow-left" id="editor-inspector">
+              <div class="window-menu text-shadow">
+                <h4>Inspector</h4>
+                <h5 class="inspector-selected-object"></h5>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="window" id="project-resources" collapsed>
+          <div class="window-menu" id="editor-bottom-bar">
+            <h4>Project Resources</h4>
+            <button id="btn-project-actors" class="window-menu-item">Actors</button>
+            <button id="btn-project-scenes" class="window-menu-item">Scenes</button>
+            <button id="btn-project-scripts" class="window-menu-item">Scripts</button>
+            <button id="btn-project-files" class="window-menu-item">Files</button>
+            <button id="btn-project-variables" class="window-menu-item" advanced-feature>Variables</button>
+            <button id="btn-project-signals" class="window-menu-item" advanced-feature>Signals</button>
+            <button id="btn-project-settings" class="window-menu-item">Settings</button>
+          </div>
+
+          <div id="resources-editor">
+
+            <div class="actor-editor" hidden current="">
+              <div class="window-menu text-shadow">
+                <h4>Actors</h4>
+                <select id="actor-select" class="window-menu-item"></select>
+                <button id="actor-rename" class="window-menu-item material-icons">edit</button>
+                <button id="actor-new" class="window-menu-item material-icons">add</button>
+                <button id="actor-delete" class="window-menu-item material-icons">delete</button>
+              </div>
+
+            <div class="actor-editor-inner">
+              <div class="left-fields">
+                <p class="actor-prop-label">Name</p>
+                <input id="actor-prop-name" class="actor-prop-input" placeholder="Anonymous" />
+                <p class="actor-prop-label">Description</p>
+                <textarea id="actor-prop-description" class="actor-prop-input" placeholder="Who could it be?"></textarea>
+                <p class="actor-prop-label">Layers</p>
+                <div class="actor-prop-layers">
+                  <div class="window-menu">
+                    <h4>Layers</h4>
+                    <button id="actor-layer-new" class="window-menu-item material-icons">add</button>
+                    <button id="actor-layer-delete" class="window-menu-item material-icons">delete</button>
+                  </div>
+                  <ul id="actor-layers"></ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="place-editor" hidden current="">
+              <div class="window-menu text-shadow">
+                <h4>Places</h4>
+                <select id="place-select" class="window-menu-item"></select>
+                <button id="place-rename" class="window-menu-item material-icons">edit</button>
+                <button id="place-new" class="window-menu-item material-icons">add</button>
+                <button id="place-delete" class="window-menu-item material-icons">delete</button>
+              </div>
+
+              <div class="place-editor-inner">
+                <div class="left-fields">
+                  <p class="place-prop-label">Name</p>
+                  <input id="place-prop-name" class="place-prop-input" placeholder="Somewhere" />
+                  <p class="place-prop-label">Description</p>
+                  <textarea id="place-prop-description" class="place-prop-input" placeholder="Where could this be?"></textarea>
+                  <p class="place-prop-label">Images</p>
+                  <div class="place-prop-images">
+                    <div class="window-menu">
+                      <h4>Images</h4>
+                      <button id="place-image-new" class="window-menu-item material-icons">add</button>
+                      <button id="place-image-delete" class="window-menu-item material-icons">delete</button>
+                    </div>
+                    <ul id="place-images"></ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <script src="./editor.js" type="module"></script>
+  </body>
+</html>
+
+<template id="scene-template">
+  <style>
+    :host {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      background-color: var(--color-dark);
+      color: var(--color-light);
+
+      .events-container {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow-y: auto;
+        padding: 0.5rem;
+      }
+
+      .commands {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        padding: 0.5rem;
+        min-height: min-content;
+      }
+    }
+  </style>
+  <div class="window">
+    <div class="window-menu text-shadow">
+      <span class="scene-title">
+        <h4>Scene:</h4>
+        <input type="text" class="scene-title-input" />
+      </span>
+    </div>
+    
+    <div class="events-container">
+      <slot></slot>
+    </div>
+
+    <div class="commands">
+      <slot name="commands"></slot>
+    </div>
+  </div>
+</template>

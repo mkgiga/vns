@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+
+<!--
+  Scroll to the bottom to see how the VN engine is used in a real-world example.
+
+  @date 2024-11-12
+-->
+
+<html lang="en">
+  <head>
+    <title>VN Engine Example</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+      /* Main font */
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+      /* Article font */
+      @import url("https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap");
+
+      html,
+      body {
+        font-family: "Poppins", sans-serif;
+        font-size: 16px;
+        margin: 0;
+        padding: 0;
+        max-width: 100vw;
+        overflow-x: hidden;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        min-width: 100vw;
+        margin: 0;
+
+        text-align: center;
+        background-color: #f0f0f0;
+
+        nav {
+          display: flex;
+          flex-direction: row;
+          gap: 1em;
+        }
+
+        p,
+        h1,
+        h2,
+        h3 {
+          user-select: none;
+        }
+
+        header {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          background-color: #fff;
+          place-self: flex-start;
+          width: 100%;
+          padding: 0.5em 0;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          z-index: 100;
+          top: 0;
+          z-index: 100;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .app {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: 100vw;
+          height: 100vh;
+          margin: 0;
+          padding: 0;
+
+          p {
+            text-align: center;
+            text-justify: left;
+          }
+
+          main {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+
+            .game-info {
+              display: inline-flex;
+              flex-direction: column;
+              justify-self: flex-end;
+              padding: auto 1em;
+              flex-grow: 0;
+              flex-shrink: 1;
+
+              p {
+                font-family: "Merriweather", serif;
+                font-weight: 400;
+                font-size: 1.1em;
+                text-align: justify;
+                margin-left: 3em;
+              }
+
+              h3 {
+                font-size: 2em;
+                padding-left: 1em;
+                text-align: left;
+              }
+            }
+          }
+        }
+
+        #vn-scene-container {
+          box-sizing: border-box;
+          aspect-ratio: 16 / 9;
+          max-width: 100%;
+          margin: 0 auto;
+          border: 1px solid #000;
+          background-color: #fff;
+          flex-grow: 1;
+          height: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="app">
+      <header>
+        <h1>Home</h1>
+        <nav>
+          <a href="#">Home</a>
+          <a href="#">About</a>
+          <a href="#">Discord</a>
+          <a href="#">FAQ</a>
+        </nav>
+      </header>
+
+      <main>
+        <h2>My Steamy Visual Novel</h2>
+
+        <!-- 
+          The user creates an element anywhere in their document
+          which they target by passing a selector to the VN constructor or VNEngine.init(selector) method.
+        -->
+        <div id="vn-scene-container"></div>
+
+        <div class="game-info">
+          <h3>Game Info</h3>
+          <p>
+            So you've decided to play my visual novel. I hope you enjoy it! It's
+            a story about a young engineer who falls in love with a robot.
+            <br />
+            <br />
+            As you play, you'll be presented with choices that will affect the
+            outcome of the story.
+            <br />
+            Once you've made a choice, you can't go back, so choose wisely!
+            Choices have consequences, after all.
+            <br />
+            Enjoy the game! Please let me know what you think.
+          </p>
+        </div>
+      </main>
+    </div>
+
+    <footer>
+      <p>&copy; KuleExampleSoft 2024</p>
+    </footer>
+
+    <!-- Example usage -->
+
+    <script type="module">
+      import { VNEngine } from "../vns.js";
+
+      document.addEventListener("DOMContentLoaded", () => {
+        fetch("./test-vns-script.vns").then((response) => {
+          response.text().then((script) => {
+
+            // just pass the script to the engine
+            // and the element it should render to.
+            // simple, no?
+            
+            const engine = new VNEngine({
+              sceneHost: document.getElementById("vn-scene-container"),
+              script: script,
+              autoRun: true,
+            });
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

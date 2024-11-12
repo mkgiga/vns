@@ -1,0 +1,252 @@
+[
+  {
+    "name": "new.place",
+    "params": {
+      "name": "The 'burbs",
+      "id": "theburbs",
+      "description": "Just the same old neighborhood you've always known.",
+      "images": [
+        {
+          "depth": -1,
+          "src": "https://wiki.developer.mozilla.org/skins/firefox-developer/images/firefox-developer-logo_2x.png",
+          "css": ""
+        },
+        {
+          "depth": 1,
+          "src": "https://wiki.developer.mozilla.org/skins/firefox-developer/images/firefox-developer-logo_2x.png",
+          "css": ""
+        }
+      ],
+      "audio": [
+        {
+          "loop": true,
+          "volume": 1,
+          "src": "https://soundimage.org/wp-content/uploads/2016/12/Peaceful-Evening_Looping.mp3"
+        },
+        {
+          "loop": true,
+          "volume": 0.5,
+          "src": "https://soundimage.org/amb-suburban-ambience/"
+        }
+      ],
+      "transitions": {
+        "in": {
+          "duration": 1,
+          "effect": "fade"
+        },
+        "out": {
+          "duration": 1,
+          "effect": "fade"
+        }
+      }
+    }
+  },
+  {
+    "name": "new.actor",
+    "params": {
+      "name": "Jessica",
+      "id": "jessica",
+      "description": "A disturbed, sick and demented individual who is a danger to herself and others.",
+      "text": {
+        "color": "#000000",
+        "font": "Arial",
+        "size": "normal",
+        "style": "normal"
+      },
+      "parts": [
+        {
+          "name": "face",
+          "offset": { "x": 0, "y": -275 },
+          "origin": "center",
+          "images": {
+            "neutral": "./images/characters/jessica/face-neutral.png",
+            "happy": "./images/characters/jessica/face-happy.png",
+            "sad": "./images/characters/jessica/face-sad.png",
+            "angry": "./images/characters/jessica/face-angry.png",
+            "shocked": "./images/characters/jessica/face-shocked.png",
+            "disgusted": "./images/characters/jessica/face-disgusted.png"
+          },
+
+          "depth": 1
+        },
+        {
+          "name": "pose",
+          "offset": { "x": 0, "y": 0 },
+          "images": {
+            "idle": "./images/characters/jessica/pose-idle.png",
+            "excited": "./images/characters/jessica/pose-excited.png",
+            "arms-crossed": "./images/characters/jessica/pose-arms-crossed.png"
+          },
+          "depth": 0
+        }
+      ],
+
+      "signals": {
+        ":)": "actor('jessica').part('face').show('happy')",
+        ":(": "actor('jessica').part('face').show('sad')",
+        ":O": "actor('jessica').part('face').show('shocked')",
+        ":|": "actor('jessica').part('face').show('neutral')",
+        ">:(": "actor('jessica').part('face').show('angry')",
+        ";/": "actor('jessica').part('face').show('disgusted')",
+        "crossed_arms": "actor('jessica').part('pose').show('arms-crossed')",
+        "excited": "actor('jessica').part('pose').show('excited')",
+        "idle": "actor('jessica').part('pose').show('idle')"
+      },
+
+      "defaults": {
+        "face": "neutral",
+        "pose": "idle"
+      },
+
+      "css": ""
+    }
+  },
+  {
+
+    "name": "new.actor",
+    "params": {
+      "name": "You",
+      "description": "You are a normal person who is just trying to get by.",
+      "text": {
+        "color": "#000000",
+        "font": "sans-serif",
+        "size": "normal",
+        "style": "normal",
+        "weight": "normal"
+      },
+      "parts": [
+        {
+          "name": "face",
+          "offset": { "x": 0, "y": -275 },
+          "origin": "center",
+          "images": {},
+          "depth": 1
+        },
+        {
+          "name": "pose",
+          "offset": { "x": 0, "y": 0 },
+          "images": {},
+          "depth": 0,
+          "css": ""
+        }
+      ]
+    }
+  },
+  {
+
+    "name": "scene.set.place",
+    "params": {
+      "id": "theburbs"
+    }
+  },
+  {
+
+    "name": "scene.set.actor",
+    "params": {
+      "id": "jessica",
+      "transition": {
+        "wait": true,
+        "timing": "ease",
+        "duration": 5,
+        "effect": "fade"
+      },
+      "options": {
+        "depth": 1
+      }
+    }
+  },
+  {
+
+    "name": "time.wait",
+    "params": {
+      "duration": 5000
+    }
+  },
+  {
+
+    "name": "dialogue.speakers.set",
+    "params": {
+      "speakers": ["jessica"]
+    }
+  },
+  {
+
+    "name": "dialogue.entry",
+    "params": {
+      "text": "Hello, I'm Jessica. I'm a disturbed, sick and demented individual who is a danger to herself and others."
+    }
+  },
+  {
+
+    "name": "dialogue.entry",
+    "params": {
+      "text": "I'm going to ask you a series of questions. Please answer them honestly."
+    }
+  },
+  {
+
+    "name": "dialogue.choice",
+    "params": {
+      "text": "Do you think we were born to be good or evil?",
+      "timer": null,
+      "choices": [
+        {
+          "text": "Yes",
+          "goto": "answer->yes"
+        },
+        {
+          "text": "No",
+          "goto": "answer->no"
+        }
+      ]
+    }
+  },
+
+  {
+
+    "name": "engine.context.declare.fn",
+    "params": {
+      "parameters": {},
+      "name": "answer",
+      "body": [
+        {
+
+          "name": "engine.context.declare.fn",
+          "params": {
+            "parameters": {},
+            "name": "yes",
+            "body": [
+              {
+
+                "name": "dialogue.entry",
+                "params": {
+                  "text": "I see. In that case..."
+                }
+              },
+              {
+
+                "name": "dialogue.choice",
+                "params": {
+                  "text": "Are you a good person?",
+                  "timer": null,
+                  "choices": [
+                    {
+                      "text": "Yes",
+                      "goto": "answer2->yes",
+                      "params": {}
+                    },
+                    {
+                      "text": "No",
+                      "goto": "answer2->no",
+                      "params": {}
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+]

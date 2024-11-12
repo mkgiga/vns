@@ -1,0 +1,51 @@
+
+/*
+ * Generic multi-purpose styles that may be used in any context,
+ * like drop shadows on text, or a quick way to center an element.
+ */
+
+@import url(https://fonts.googleapis.com/css?family=Raleway:400,700);
+@import url(https://fonts.googleapis.com/icon?family=Material+Icons);
+
+.text-shadow {
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  
+  & > * {
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  }
+}
+
+.shadow { box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); }
+
+.inner-shadow-left { box-shadow: 10px 0 10px rgba(0, 0, 0, 0.25) inset; }
+.inner-shadow-right { box-shadow: -10px 0 10px rgba(0, 0, 0, 0.25) inset; }
+.inner-shadow-top { box-shadow: 0 10px 10px rgba(0, 0, 0, 0.25) inset; }
+.inner-shadow-bottom { box-shadow: 0 -10px 10px rgba(0, 0, 0, 0.25) inset; }
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+
+.material-icons {
+  /* thanks google */
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}

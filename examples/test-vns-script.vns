@@ -1,0 +1,54 @@
+--- project ---
+
+  name = Example Project
+  description = An example project to demonstrate the VNS format.
+  version = 1.0.0
+  license = MIT
+  author = Anonymous
+  url = https://example.com
+
+
+--- script ---
+
+create layer bg
+  | z = -1
+
+create layer fg
+  | z = 1
+
+@start
+
+  with layer bg:
+    | image = "./assets/bg.png"
+    | position = (0, 0)
+    | scale = (1, 1)
+
+  alice
+    How are you today?
+
+  you (choice)
+    What should I say?
+    - I've been better. [answer.bad]
+    - I'm good. [answer.good]
+
+@answer
+  @good
+    You gesture enthusiastically.
+
+    you
+      I'm good.
+
+    alice
+      That's great!
+      <-
+
+  @bad
+    you
+      I've been better.
+
+    alice
+      I'm sorry to hear that. Is there anything I can do to help?
+
+    you
+      It's okay. I'll be fine. Thanks for asking.
+      <-

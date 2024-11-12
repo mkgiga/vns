@@ -1,0 +1,292 @@
+/**
+ * .vns Editor styles
+ * hopefully this will look good
+ *
+ * date: 2024-11-10
+ * author: @mkgiga
+ * version: 0.1.0
+ * license: MIT
+ */
+
+:root {
+  --color-primary: #1974d4;
+  --color-secondary: #6c757d;
+  --color-good: #28a745;
+  --color-warning: #ffc107;
+  --color-bad: #dc3545;
+  --color-info: #17a2b8;
+  --color-light: #f8f9fa;
+  --color-dark: #343a40;
+}
+
+/* Default styles for all elements, make sure that the style is consistent across browsers */
+* {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+}
+
+html,
+body {
+  font-family: "Raleway", sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+
+  background-color: var(--color-dark);
+  color: var(--color-light);
+
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#editor {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+
+  .editor-inner {
+    display: flex;
+    flex-direction: row;
+
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+
+    #editor-left {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      flex: 1;
+
+      #editor-script {
+
+      }
+    }
+
+    #editor-right {
+
+      display: flex;
+      flex-direction: column;
+
+      min-width: 480px;
+      
+      
+      #vn-preview {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+
+        #vn-preview-player-container {
+          aspect-ratio: 16 / 9;
+
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+          justify-content: center;
+          align-items: center;
+
+          background-color: black;
+          
+          height: 100%;
+          width: 100%;
+          
+        }
+        
+      }
+
+      #editor-inspector {
+        width: 100%;
+        height: 100%;
+        margin-top: auto;
+      }
+
+      
+    }
+  }
+
+  .editor-bottom-bar {
+    margin-top: auto;
+  }
+}
+
+#editor-inspector {
+  display: flex;
+  flex-direction: column;
+
+  h5.inspector-selected-object {
+    font-style: italic;
+    text-align: center;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  }
+}
+
+#project-resources {
+
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  .resources-editor {
+    transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  &:not([collapsed]) {
+    width: 100%;
+    height: 100%;
+
+    .resources-editor {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem;
+      background-color: var(--color-dark);
+      color: var(--color-light);
+      overflow-y: auto;
+    }
+  }
+  
+
+  &[collapsed] {
+    .resources-editor {
+      display: none;
+    }
+  }
+}
+
+/* A window is a generic workspace container */
+.window {
+  display: flex;
+  flex-direction: column;
+}
+
+/* A window menu is a horizontal bar at the top of a window, present in most operating systems */
+.window-menu {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+
+  user-select: none;
+
+  background-color: var(--color-primary);
+
+  /* bottom-only sleek box shadow on the bottom fading to transparent */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+
+  h4,
+  .window-menu-item {
+    padding: 0.5rem 1rem;
+  }
+
+  h4 {
+    margin: 0;
+    margin-right: 0.5rem;
+    padding: 0;
+
+    color: var(--color-light);
+
+    font-size: 16px;
+    line-height: 1.6;
+    font-weight: 700;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  }
+
+  .window-menu-item {
+    display: inline-flex;
+    flex-direction: row;
+
+    height: 100%;
+
+    text-align: center;
+    align-items: center;
+
+    border: none;
+    padding: 0;
+    margin: 0;
+
+    background-color: transparent;
+
+    color: var(--color-light);
+    font-size: 16px;
+    font-weight: 400;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    line-height: 1.6;
+
+    &:hover {
+      background-color: var(--color-dark);
+      filter: invert(1);
+    }
+
+    &:active {
+      background-color: var(--color-secondary);
+    }
+
+    button {
+      cursor: pointer;
+    }
+  }
+}
+
+.dropdown-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background-color: var(--color-dark);
+  color: var(--color-light);
+  position: absolute;
+  z-index: 100;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+
+  .menu-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    gap: 0.5rem;
+    width: fit-content;
+    color: var(--color-light);
+    cursor: pointer;
+
+    &:hover {
+      filter: brightness(0.6);
+    }
+
+    &:active {
+      filter: brightness(0.8);
+    }
+
+    .menu-item.separator {
+      border-bottom: 1px solid var(--color-secondary);
+      width: 100%;
+      margin: 0.5rem 0;
+    }
+
+    .menu-item.disabled {
+      color: var(--color-secondary);
+      cursor: not-allowed;
+    }
+  }
+
+  &[hidden] {
+    display: none !important;
+  }
+}

@@ -1,0 +1,34 @@
+@keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+@keyframes fadeOut { 0% { opacity: 1; } 100% { opacity: 0; } }
+
+@keyframes slideInLeft100 { 0% { transform: translateX(-100%); } 100% { transform: translateX(0); } }
+@keyframes slideInLeft50 { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
+@keyframes slideInLeft25 { 0% { transform: translateX(-25%); } 100% { transform: translateX(0); } }
+@keyframes slideInRight100 { 0% { transform: translateX(100%); } 100% { transform: translateX(0); } }
+@keyframes slideInRight50 { 0% { transform: translateX(50%); } 100% { transform: translateX(0); } }
+@keyframes slideInRight25 { 0% { transform: translateX(25%); } 100% { transform: translateX(0); } }
+@keyframes slideInTop100 { 0% { transform: translateY(-100%); } 100% { transform: translateY(0); } }
+@keyframes slideInTop50 { 0% { transform: translateY(-50%); } 100% { transform: translateY(0); } }
+@keyframes slideInTop25 { 0% { transform: translateY(-25%); } 100% { transform: translateY(0); } }
+@keyframes slideInBottom100 { 0% { transform: translateY(100%); } 100% { transform: translateY(0); } }
+@keyframes slideInBottom50 { 0% { transform: translateY(50%); } 100% { transform: translateY(0); } }
+@keyframes slideInBottom25 { 0% { transform: translateY(25%); } 100% { transform: translateY(0); } }
+@keyframes slideOutLeft100 { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+@keyframes slideOutLeft50 { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+@keyframes slideOutRight100 { 0% { transform: translateX(0); } 100% { transform: translateX(100%); } }
+@keyframes slideOutRight50 { 0% { transform: translateX(0); } 100% { transform: translateX(50%); } }
+@keyframes slideOutTop100 { 0% { transform: translateY(0); } 100% { transform: translateY(-100%); } }
+@keyframes slideOutTop50 { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+@keyframes slideOutBottom100 { 0% { transform: translateY(0); } 100% { transform: translateY(100%); } }
+@keyframes slideOutBottom50 { 0% { transform: translateY(0); } 100% { transform: translateY(50%); } }
+@keyframes slideOutBottom25 { 0% { transform: translateY(0); } 100% { transform: translateY(25%); } }
+@keyframes slideOutTop25 { 0% { transform: translateY(0); } 100% { transform: translateY(-25%); } }
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes spinReverse { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
+
+@keyframes shakeHorizontal {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+  20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
