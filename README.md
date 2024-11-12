@@ -8,6 +8,8 @@ A visual novel engine, scripting language and player for creating interactive st
   - [.vns Parser](#vns-parser)
   - [VN Editor](#vn-editor)
 - [.vns File Format](#vns-file-format)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Project Structure
 

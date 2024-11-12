@@ -2620,7 +2620,7 @@ export class VNEngine {
 
         this.state.project.objects.places[id] = newPlace;
         this.state.query.selected = [newPlace];
-
+        
       },
     },
 
